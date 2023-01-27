@@ -9,11 +9,21 @@ static void error_callback(int error, const char* desc) {
 
 int main(void) {
     if (!glfwInit()) {
-        printf("initialization failed\n");
         return -1;
     }
-    printf("initialization successful\n");
+    glfwSetErrorCallback(error_callback);
 
+    // specify OpenGl version
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    GLFWwindow* window = glfwCreateWindow(640, 480, "test", NULL, NULL);
+    if (!window) {
+        fprintf(stderr, "failed to create window");
+        glfwTerminate();
+        return -1;
+    }
+
+    glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
 }
