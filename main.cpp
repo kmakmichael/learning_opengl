@@ -33,7 +33,9 @@ int main(void) {
     glfwSetWindowCloseCallback(window, closewindow_callback);
     // lock to display refresh rate
     glfwSwapInterval(1);
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.04f, 0.04f, 0.02f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glFlush();
     glfwSwapBuffers(window);
     while (!glfwWindowShouldClose(window)) {
         glfwWaitEvents();
