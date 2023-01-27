@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
 static void error_callback(int error, const char* desc) {
@@ -18,7 +19,6 @@ int main(void) {
     glfwSetErrorCallback(error_callback);
 
     // specify some hints
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     GLFWwindow* window = glfwCreateWindow(640, 480, "test", NULL, NULL);
@@ -30,12 +30,13 @@ int main(void) {
     }
 
     glfwMakeContextCurrent(window);
+    int version = gladLoadGL(glfwGetProcAddress);
+    printf("GL %d.%d\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
     glfwSetWindowCloseCallback(window, closewindow_callback);
     // lock to display refresh rate
     glfwSwapInterval(1);
     glClearColor(0.04f, 0.04f, 0.02f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    glFlush();
     glfwSwapBuffers(window);
     while (!glfwWindowShouldClose(window)) {
         glfwWaitEvents();
