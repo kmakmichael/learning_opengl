@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include <stdio.h>
 
 #include <GLFW/glfw3.h>
@@ -9,7 +8,7 @@ static void error_callback(int error, const char* desc) {
 
 static void closewindow_callback(GLFWwindow* w)
 {
-    printf("closing window");
+    printf("closing window\n");
 }
 
 int main(void) {
@@ -18,18 +17,24 @@ int main(void) {
     }
     glfwSetErrorCallback(error_callback);
 
-    // specify OpenGl version
+    // specify some hints
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     GLFWwindow* window = glfwCreateWindow(640, 480, "test", NULL, NULL);
+
     if (!window) {
-        fprintf(stderr, "failed to create window");
+        fprintf(stderr, "failed to create window\n");
         glfwTerminate();
         return -1;
     }
 
     glfwMakeContextCurrent(window);
     glfwSetWindowCloseCallback(window, closewindow_callback);
+    // lock to display refresh rate
+    glfwSwapInterval(1);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glfwSwapBuffers(window);
     while (!glfwWindowShouldClose(window)) {
         glfwWaitEvents();
     }
