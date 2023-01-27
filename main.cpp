@@ -7,6 +7,11 @@ static void error_callback(int error, const char* desc) {
     fprintf(stderr, "Error %s\n", desc);
 }
 
+static void closewindow_callback(GLFWwindow* w)
+{
+    printf("closing window");
+}
+
 int main(void) {
     if (!glfwInit()) {
         return -1;
@@ -21,6 +26,12 @@ int main(void) {
         fprintf(stderr, "failed to create window");
         glfwTerminate();
         return -1;
+    }
+
+    glfwMakeContextCurrent(window);
+    glfwSetWindowCloseCallback(window, closewindow_callback);
+    while (!glfwWindowShouldClose(window)) {
+        glfwWaitEvents();
     }
 
     glfwDestroyWindow(window);
