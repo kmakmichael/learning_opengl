@@ -1,5 +1,4 @@
 #include "shader_sources.h"
-#include <glad/gl.h>
 
 const GLchar* basic_vertex_src = 
 R"glsl(#version 330 core
@@ -20,4 +19,35 @@ out vec4 outColor;
 void main()
 {
     outColor = vec4(1.0, 1.0, 1.0, 1.0);
+})glsl";
+
+const GLchar* rotation_vertex_src = 
+R"glsl(#version 330 core
+
+in vec3 position;
+uniform vec3 rotation;
+
+mat4x4 rotation_matrix(vec3 r);
+
+void main()
+{
+    mat4x4 rm = rotation_matrix(radians(rotation));
+    gl_Position = rm * vec4(position, 1.0);
+}
+
+mat4x4 rotation_matrix(in vec3 r)
+{
+    mat4x4 r_x = mat4x4(  1.0, 0.0, 0.0, 0.0,
+                            0.0, cos(r.x), sin(r.x), 0.0,
+                            0.0, -1*sin(r.x), cos(r.x), 0.0,
+                            0.0, 0.0, 0.0, 1.0);
+    mat4x4 r_y = mat4x4(  cos(r.y), 0.0, -1*sin(r.y), 0.0,
+                            0.0, 1.0, 0.0, 0.0,
+                            sin(r.y), 0.0, cos(r.y), 0.0,
+                            0.0, 0.0, 0.0, 1.0);
+    mat4x4 r_z = mat4x4(  cos(r.z), sin(r.z), 0.0, 0.0,
+                            -1*sin(r.z), cos(r.z), 0.0, 0.0,
+                            0.0, 0.0, 1.0, 0.0,
+                            0.0, 0.0, 0.0, 1.0);
+    return r_x * r_y * r_z;
 })glsl";
