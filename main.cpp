@@ -59,16 +59,40 @@ int main() {
     glBindVertexArray(vao);
 
     GLfloat vertices[] = {
-        -0.25f, -0.25f, 0.0f,
-        0.5f, -0.25f, 0.0f,
-        -0.25f, 0.5f, 0.0f,
+        1.0, 1.0, 1.0,
+        1.0, 1.0, -1.0,
+        1.0, -1.0, -1.0,
+        1.0, -1.0, 1.0,
+        -1.0, -1.0, 1.0,
+        -1.0, -1.0, -1.0,
+        -1.0, 1.0, -1.0,
+        -1.0, 1.0, 1.0
+    };
+    GLuint wireframe_cube[] = {
+        0,1,
+        1,2,
+        2,3,
+        3,4,
+        4,5,
+        5,6,
+        6,7,
+        0,3,
+        4,7,
+        0,7,
+        1,6,
+        2,5
     };
     GLuint vbo;
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    GLuint vertex_shader = read_shader(GL_VERTEX_SHADER, rotation_vertex_src);
+    GLuint ebo;
+    glGenBuffers(1, &ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(wireframe_cube), wireframe_cube, GL_STATIC_DRAW);
+
+    GLuint vertex_shader = read_shader(GL_VERTEX_SHADER, model_vertex_src);
     GLuint fragment_shader = read_shader(GL_FRAGMENT_SHADER, basic_fragment_src);    
     GLuint shader_program = glCreateProgram();
     glAttachShader(shader_program, vertex_shader);
@@ -80,9 +104,13 @@ int main() {
     glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(posAttrib);
 
-    GLfloat rotation[] = {0.0f, 0.0f, 90.0f};
+    GLfloat rotation[] = {45.0f, 45.0f, 0.0f};
     GLint rotationAttrib = glGetUniformLocation(shader_program, "rotation");
     glUniform3f(rotationAttrib, rotation[0], rotation[1], rotation[2]);
+
+    GLfloat scale[] = {0.4, 0.4, 0.4};
+    GLint scaleAttrib = glGetUniformLocation(shader_program, "scale");
+    glUniform3f(scaleAttrib, scale[0], scale[1], scale[2]);
 
     glClearColor(0.04f, 0.04f, 0.02f, 1.0f);
     while (!glfwWindowShouldClose(window)) {
@@ -90,7 +118,7 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT);
         rotation[2] += 1;
         glUniform3f(rotationAttrib, rotation[0], rotation[1], rotation[2]);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_LINES, 24, GL_UNSIGNED_INT, 0);
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
