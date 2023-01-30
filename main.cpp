@@ -15,6 +15,12 @@ static void closewindow_callback(GLFWwindow* w)
 {
     printf("closing window\n");
 }
+void windowsize_callback(GLFWwindow* window, int width, int height)
+{
+    printf("window resized to %d:%d\n", width, height);
+}
+
+
 
 static GLuint read_shader(GLenum shader_type, const char* shader_src) {
     GLuint shader = glCreateShader(shader_type);
@@ -43,7 +49,6 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     GLFWwindow* window = glfwCreateWindow(640, 480, "test", NULL, NULL);
-
     if (!window) {
         fprintf(stderr, "Failed to create window\n");
         glfwTerminate();
@@ -53,6 +58,7 @@ int main() {
     int version = gladLoadGL(glfwGetProcAddress);
     printf("GL %d.%d\n", GLAD_VERSION_MAJOR(version), GLAD_VERSION_MINOR(version));
     glfwSetWindowCloseCallback(window, closewindow_callback);
+    glfwSetWindowSizeCallback(window, windowsize_callback);
 
     GLuint vao;
     glGenVertexArrays(1, &vao);
@@ -100,19 +106,26 @@ int main() {
     glLinkProgram(shader_program);
     glUseProgram(shader_program);
 
+    // vertices
     GLint posAttrib = glGetAttribLocation(shader_program, "position");
     glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(posAttrib);
 
+    // model transforms
     GLfloat rotation[] = {45.0f, 45.0f, 0.0f};
-    GLint rotationAttrib = glGetUniformLocation(shader_program, "rotation");
-    glUniform3f(rotationAttrib, rotation[0], rotation[1], rotation[2]);
-
     GLfloat scale[] = {0.4, 0.4, 0.4};
+    GLfloat translation[] = {0.0f, 0.0f, 0.0f};
+    GLint rotationAttrib = glGetUniformLocation(shader_program, "rotation");
     GLint scaleAttrib = glGetUniformLocation(shader_program, "scale");
+    GLint translationAttrib = glGetUniformLocation(shader_program, "translation");
+    glUniform3f(rotationAttrib, rotation[0], rotation[1], rotation[2]);
     glUniform3f(scaleAttrib, scale[0], scale[1], scale[2]);
+    glUniform3f(translationAttrib, translation[0], translation[1], translation[2]);
 
     glClearColor(0.04f, 0.04f, 0.02f, 1.0f);
+
+
+    // main loop
     while (!glfwWindowShouldClose(window)) {
         glfwSwapInterval(1);
         glClear(GL_COLOR_BUFFER_BIT);
