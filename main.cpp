@@ -17,6 +17,7 @@ static void closewindow_callback(GLFWwindow* w)
 }
 void windowsize_callback(GLFWwindow* window, int width, int height)
 {
+    glViewport(0, 0, width, height);
     printf("window resized to %d:%d\n", width, height);
 }
 
@@ -112,7 +113,7 @@ int main() {
     glEnableVertexAttribArray(posAttrib);
 
     // model transforms
-    GLfloat rotation[] = {45.0f, 45.0f, 0.0f};
+    GLfloat rotation[] = {0.0f, 0.0f, 0.0f};
     GLfloat scale[] = {0.4, 0.4, 0.4};
     GLfloat translation[] = {0.0f, 0.0f, 0.0f};
     GLint rotationAttrib = glGetUniformLocation(shader_program, "rotation");
@@ -129,7 +130,7 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
         glfwSwapInterval(1);
         glClear(GL_COLOR_BUFFER_BIT);
-        rotation[2] += 1;
+        rotation[1] += 1;
         glUniform3f(rotationAttrib, rotation[0], rotation[1], rotation[2]);
         glDrawElements(GL_LINES, 24, GL_UNSIGNED_INT, 0);
         glfwSwapBuffers(window);
